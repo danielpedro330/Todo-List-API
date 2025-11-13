@@ -1,35 +1,29 @@
-import { UserWithTheSameEmailError } from "../../../use-cases/error/user-with-the-same-Email";
-import { makeRegisterUseCase } from "../../../use-cases/factories/make-register-use-case";
-import { FastifyReply, FastifyRequest } from "fastify";
-import z from "zod";
+import { app } from "../../../app";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import request from "supertest";
 
-export async function register(request: FastifyRequest, reply: FastifyReply) {
-    const registerBodySchema = z.object({
-        name: z.string(),
-        email: z.string().email(),
-        password: z.string().min(6)
+describe("Authenticate (e2e)", () => {
+    beforeEach(async () => {
+        await app.ready()
+    })
+    
+    afterEach(async () => {
+        await app.close()
     })
 
-    const { name, email, password } = registerBodySchema.parse(request.body)
+    it("Should be able to authenticate", async () => {
 
-    try {
-        const registerUseCase = makeRegisterUseCase()
-
-        await registerUseCase.execute({
-            name,
-            email,
-            password
+        await request(app.server).post('/users').send({
+            name: "Daniel Doe",
+            email: "danielq2@gmail.com",
+            password: "123456"
         })
-    }catch (err) {
-        if(err instanceof UserWithTheSameEmailError) {
-            console.log(err)
-            return reply.status(400).send({ message: err.message })
 
-        }
+        const authTesponse = await request(app.server).post('/session').send({
+            email: "danielq2@gmail.com",
+            password: "123456"
+        })
 
-        throw err
-    }
-
-    return reply.status(201).send()
-
-}
+        expect(authTesponse.statusCode).toEqual(201)
+    })
+})
