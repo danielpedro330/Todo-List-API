@@ -16,14 +16,8 @@ export class InMemoryTaskRepository implements TaskRepository {
         return task
     }
 
-    async searchMany(query: string) {
-        const task = this.items.find(item => item.title === query)
-
-        if (!task) {
-            return null
-        }
-
-        return task
+    async searchMany(query: string, page: number) {
+        return this.items.filter(item => item.title.includes(query)).slice((page - 1) * 20, page * 20) 
     }
 
     async create(data: Prisma.TaskCreateInput) {

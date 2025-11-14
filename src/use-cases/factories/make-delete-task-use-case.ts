@@ -1,7 +1,7 @@
 import { PrismaTaskRepository } from "@/repositories/prisma/prisma-task-repository";
 import { DeleteTaskUseCase } from "../delete-task";
 
-export function makeSaveUseCase() {
+export function makeDeleteUseCase() {
     const taskRepository = new PrismaTaskRepository()
     const deleteTask = new DeleteTaskUseCase(taskRepository)
 

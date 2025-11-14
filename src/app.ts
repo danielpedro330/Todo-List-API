@@ -2,7 +2,6 @@ import fastify from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import { env } from "./env";
 import { userRoutes } from "./http/controllers/User/routes";
- "@fastify/jwt"
 
 export const app = fastify()
 

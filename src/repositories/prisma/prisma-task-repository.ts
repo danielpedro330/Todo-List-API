@@ -13,11 +13,13 @@ export class PrismaTaskRepository implements TaskRepository {
         return task
     }
 
-    async searchMany(query: string) {
-        const task = await prisma.task.findFirst({
+    async searchMany(query: string, page: number) {
+        const task = await prisma.task.findMany({
             where: {
                 title: query
-            }
+            },
+            take:20,
+            skip: (page - 1) * 20 
         })
 
         return task

@@ -1,10 +1,10 @@
 import { PrismaTaskRepository } from "@/repositories/prisma/prisma-task-repository";
 import { SaveTaskUseCase } from "../save-task";
-import { CreateTaskUseCase } from "../create-task";
+import { SearchTaskUseCase } from "../search-task";
 
-export function makeCreateTaskUseCase() {
+export function makeSearchTaskUseCase() {
     const taskRepository = new PrismaTaskRepository()
-    const createTask = new CreateTaskUseCase(taskRepository)
+    const searchTask = new SearchTaskUseCase(taskRepository)
 
-    return createTask
+    return searchTask
 }

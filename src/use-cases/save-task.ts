@@ -33,7 +33,7 @@ export class SaveTaskUseCase {
             description,
             status,
             created_at: created_at ?? new Date(),
-            updated_at
+            updated_at: new Date()
         })
 
         return {
