@@ -10,11 +10,11 @@ export async function saveTask(request: FastifyRequest, reply: FastifyReply) {
         status: z.nativeEnum(Status),
     })
 
-    const deleteTaskParamsSchema = z.object({
+    const saveTaskParamsSchema = z.object({
         taskId: z.string().uuid()
     })
     
-    const { taskId } =  deleteTaskParamsSchema.parse(request)
+    const { taskId } =  saveTaskParamsSchema.parse(request.params)
 
     const { title, description, status } =  saveTaskBodySchema.parse(request.body)
 
@@ -26,7 +26,8 @@ export async function saveTask(request: FastifyRequest, reply: FastifyReply) {
         title,
         description,
         status,
-        updated_at: new Date()
+        updated_at: new Date(),
+        user_id: request.user.sub
     })
     return reply.status(200).send({ message: "Task updated successfully" })
      

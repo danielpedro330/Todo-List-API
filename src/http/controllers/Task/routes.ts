@@ -5,10 +5,14 @@ import { verifyJWT } from "@/http/middlewares/verify-jwt";
 import { deleteTask } from "./delete";
 import { saveTask } from "./save";
 
-export function userRoutes(app: FastifyInstance) {
+export function taskRoutes(app: FastifyInstance) {
+    app.addHook("onRequest", verifyJWT)
+    
     app.post('/tasks', create)
 
-    app.get('/search_task', {onRequest: [verifyJWT]}, search)
-    app.delete('/tasks', {onRequest: [verifyJWT]}, deleteTask)
-    app.put('/tasks/:taskId', {onRequest: [verifyJWT]}, saveTask)
+    app.get('/tasks/search', search)
+
+    app.delete('/tasks/:taskId/delete', deleteTask)
+    
+    app.patch('/tasks/:taskId/save', saveTask)
 }

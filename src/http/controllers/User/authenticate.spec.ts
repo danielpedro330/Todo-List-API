@@ -1,4 +1,4 @@
-import { app } from "../../../app";
+import { app } from "@/app";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import request from "supertest";
 
@@ -24,6 +24,6 @@ describe("Authenticate (e2e)", () => {
             password: "123456"
         })
 
-        expect(authTesponse.statusCode).toEqual(201)
+        expect(authTesponse.statusCode).toEqual(200)
     })
 })

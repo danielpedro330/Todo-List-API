@@ -18,7 +18,8 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     await createTask.execute({
         title,
         description,
-        status
+        status,
+        userId: request.user.sub
     })
     return reply.status(201).send()
      

@@ -5,7 +5,8 @@ import { TaskRepository } from "../repositories/task-repository";
 interface CreateTaskUseCaseRequest {
     title: string,
     description: string,
-    status: Status
+    status: Status,
+    userId: string
 }
 
 interface CreateTaskUseCaseResponse {
@@ -18,13 +19,17 @@ export class CreateTaskUseCase {
     async execute({
         title,
         description,
-        status
+        status,
+        userId
     }: CreateTaskUseCaseRequest): Promise<CreateTaskUseCaseResponse> {
 
         const task = await this.taskRepository.create({
             title,
             description,
-            status
+            status,
+            user: {
+                connect: { id: userId }
+            }
         })
 
         return {

@@ -1,7 +1,11 @@
 import { Task, Prisma } from "@prisma/client";
 import { TaskRepository } from "../task-repository";
 import { randomUUID } from "node:crypto";
-import { title } from "node:process";
+
+type TaskCreateData = Prisma.TaskCreateInput & {
+  user_id?: string
+}
+
 
 export class InMemoryTaskRepository implements TaskRepository {
     public items: Task[] = []
@@ -20,12 +24,13 @@ export class InMemoryTaskRepository implements TaskRepository {
         return this.items.filter(item => item.title.includes(query)).slice((page - 1) * 20, page * 20) 
     }
 
-    async create(data: Prisma.TaskCreateInput) {
+    async create(data: TaskCreateData) {
         const task = {
             id: randomUUID(),
             title: data.title,
             description: data.description,
             status: data.status,
+            user_id: data.user?.connect?.id ?? data.user_id ?? '',
             created_at: new Date(),
             updated_at: new Date()
         }

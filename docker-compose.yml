@@ -4,8 +4,17 @@ services:
   todo-list-api:
     image: bitnami/postgresql:latest
     ports:
-      -5432:5432
+      - "5432:5432"
     environment:
       - POSTGRESQL_USERNAME=docker
       - POSTGRESQL_PASSWORD=Docker
       - POSTGRESQL_DATABASE=todo_list
+
+  postgres_test:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_test

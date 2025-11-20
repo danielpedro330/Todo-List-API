@@ -7,8 +7,10 @@ export async function deleteTask(request: FastifyRequest, reply: FastifyReply) {
         taskId: z.string().uuid()
     })
 
-    const { taskId } =  deleteTaskParamsSchema.parse(request)
+    console.log("PARAMS", request.params)
+     
 
+    const { taskId } =  deleteTaskParamsSchema.parse(request.params)
     
     const deleteUseCase = makeDeleteUseCase()
 
@@ -16,5 +18,4 @@ export async function deleteTask(request: FastifyRequest, reply: FastifyReply) {
         id: taskId
     })
     return reply.status(204).send()
-     
 }

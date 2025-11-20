@@ -16,7 +16,7 @@ export class PrismaTaskRepository implements TaskRepository {
     async searchMany(query: string, page: number) {
         const task = await prisma.task.findMany({
             where: {
-                title: query
+                title: { contains: query, mode: "insensitive" }
             },
             take:20,
             skip: (page - 1) * 20 

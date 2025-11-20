@@ -8,7 +8,8 @@ interface SaveTaskUseCaseRequest {
     description: string,
     status: Status,
     created_at?: Date,
-    updated_at: Date
+    updated_at: Date,
+    user_id: string
 }
 
 interface SaveTaskUseCaseReponse {
@@ -24,7 +25,8 @@ export class SaveTaskUseCase {
         description,
         status,
         created_at,
-        updated_at
+        updated_at,
+        user_id
     }: SaveTaskUseCaseRequest): Promise<SaveTaskUseCaseReponse> {
 
         const task = await this.taskRepository.save({
@@ -33,7 +35,8 @@ export class SaveTaskUseCase {
             description,
             status,
             created_at: created_at ?? new Date(),
-            updated_at: new Date()
+            updated_at: new Date(),
+            user_id,
         })
 
         return {

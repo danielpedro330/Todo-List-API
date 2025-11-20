@@ -19,7 +19,8 @@ describe("Save Task Use Case", () => {
             description: "Estudar os fundamentos do js",
             status: Status.progress,
             created_at: new Date(),
-            updated_at: new Date()
+            updated_at: new Date(),
+            user_id: "11"
         })
 
         const task = await sut.execute({
@@ -27,7 +28,8 @@ describe("Save Task Use Case", () => {
             title: "JavaScript",
             description: "Estudar os fundamentos do js e exercitar",
             status: Status.progress,
-            updated_at: new Date() 
+            updated_at: new Date(),
+            user_id: "11" 
         })
 
         expect(task.task.description).toEqual("Estudar os fundamentos do js e exercitar")

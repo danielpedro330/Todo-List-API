@@ -16,7 +16,8 @@ describe("Create Task Use Case", () => {
         const {task} = await sut.execute({
             title: "Estudar JavaScript",
             description: "Devo estudar os fundamentos de javascript",
-            status: Status.done
+            status: Status.done,
+            userId: "1"
         })
 
         expect(task.id).toEqual(expect.any(String))

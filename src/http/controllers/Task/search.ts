@@ -5,11 +5,10 @@ import z from "zod";
 export async function search(request: FastifyRequest, reply: FastifyReply) {
     const searchTaskBodySchema = z.object({
         q: z.string(),
-        page: z.number()
+        page: z.coerce.number().min(1).default(1)
     })
 
-    const { q, page } =  searchTaskBodySchema.parse(request.body)
-
+    const { q, page } =  searchTaskBodySchema.parse(request.query)
     
     const searchTaskUseCase = makeSearchTaskUseCase()
 
