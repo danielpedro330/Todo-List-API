@@ -9,10 +9,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-      
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: 'npm'
       - run: npm ci
-      - run: npm test:unit
+      - run: npm run test:unit
