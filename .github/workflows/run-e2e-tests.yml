@@ -27,11 +27,13 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npx prisma generate
-        env: 
+        env:
           DATABASE_URL: "postgresql://docker:Docker@localhost:5432/todo_list?schema=public"
+
       - run: npx prisma migrate deploy
-        env: 
+        env:
           DATABASE_URL: "postgresql://docker:Docker@localhost:5432/todo_list?schema=public"
+
       - run: npm run test:e2e
         env:
           JWT_SECRET: todolist
