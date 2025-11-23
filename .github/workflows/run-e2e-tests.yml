@@ -40,9 +40,9 @@ jobs:
           done
 
 
-      - run: npx prisma generate --schema=prisma/schema.prisma --datasource-url="postgresql://docker:Docker@localhost:5432/todo_list?schema=public"
+      - run: npx prisma generate --schema=prisma/schema.prisma
+      - run: npx prisma migrate deploy --schema=prisma/schema.prisma
 
-      - run: npx prisma migrate deploy --schema=prisma/schema.prisma --datasource-url="postgresql://docker:Docker@localhost:5432/todo_list?schema=public
   
       - run: npm run test:e2e
         env:
