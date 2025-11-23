@@ -1,0 +1,174 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/http/controllers/Task/save.ts
+var save_exports = {};
+__export(save_exports, {
+  saveTask: () => saveTask
+});
+module.exports = __toCommonJS(save_exports);
+
+// src/enum/status.ts
+var Status = /* @__PURE__ */ ((Status2) => {
+  Status2["done"] = "done";
+  Status2["progress"] = "progress";
+  return Status2;
+})(Status || {});
+
+// src/lib/prisma.ts
+var import_client = require("@prisma/client");
+
+// src/env/index.ts
+var import_config = require("dotenv/config");
+var import_zod = __toESM(require("zod"), 1);
+var envSchema = import_zod.default.object({
+  NODE_ENV: import_zod.default.enum(["dev", "test", "production"]).default("dev"),
+  JWT_SERCRET: import_zod.default.string(),
+  PORT: import_zod.default.coerce.number().default(3333)
+});
+var _env = envSchema.safeParse(process.env);
+if (_env.success == false) {
+  console.error("Invalid environment variable", _env.error.format());
+  throw new Error("Invalid environment variable");
+}
+var env = _env.data;
+
+// src/lib/prisma.ts
+var prisma = new import_client.PrismaClient({
+  log: env?.NODE_ENV == "dev" ? ["query"] : []
+});
+
+// src/repositories/prisma/prisma-task-repository.ts
+var PrismaTaskRepository = class {
+  async findById(id) {
+    const task = await prisma.task.findUnique({
+      where: {
+        id
+      }
+    });
+    return task;
+  }
+  async searchMany(query, page) {
+    const task = await prisma.task.findMany({
+      where: {
+        title: { contains: query, mode: "insensitive" }
+      },
+      take: 20,
+      skip: (page - 1) * 20
+    });
+    return task;
+  }
+  async create(data) {
+    const task = await prisma.task.create({
+      data
+    });
+    return task;
+  }
+  async save(data) {
+    const taskUpdate = await prisma.task.update({
+      where: {
+        id: data.id
+      },
+      data
+    });
+    return taskUpdate;
+  }
+  async delete(id) {
+    await prisma.task.delete({
+      where: {
+        id
+      }
+    });
+  }
+};
+
+// src/use-cases/save-task.ts
+var SaveTaskUseCase = class {
+  constructor(taskRepository) {
+    this.taskRepository = taskRepository;
+  }
+  async execute({
+    id,
+    title,
+    description,
+    status,
+    created_at,
+    updated_at,
+    user_id
+  }) {
+    const task = await this.taskRepository.save({
+      id,
+      title,
+      description,
+      status,
+      created_at: created_at ?? /* @__PURE__ */ new Date(),
+      updated_at: /* @__PURE__ */ new Date(),
+      user_id
+    });
+    return {
+      task
+    };
+  }
+};
+
+// src/use-cases/factories/make-save-task-use-case.ts
+function makeSaveUseCase() {
+  const taskRepository = new PrismaTaskRepository();
+  const saveTask2 = new SaveTaskUseCase(taskRepository);
+  return saveTask2;
+}
+
+// src/http/controllers/Task/save.ts
+var import_zod2 = __toESM(require("zod"), 1);
+async function saveTask(request, reply) {
+  const saveTaskBodySchema = import_zod2.default.object({
+    title: import_zod2.default.string(),
+    description: import_zod2.default.string(),
+    status: import_zod2.default.nativeEnum(Status)
+  });
+  const saveTaskParamsSchema = import_zod2.default.object({
+    taskId: import_zod2.default.string().uuid()
+  });
+  const { taskId } = saveTaskParamsSchema.parse(request.params);
+  const { title, description, status } = saveTaskBodySchema.parse(request.body);
+  const saveUseCase = makeSaveUseCase();
+  await saveUseCase.execute({
+    id: taskId,
+    title,
+    description,
+    status,
+    updated_at: /* @__PURE__ */ new Date(),
+    user_id: request.user.sub
+  });
+  return reply.status(200).send({ message: "Task updated successfully" });
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  saveTask
+});
