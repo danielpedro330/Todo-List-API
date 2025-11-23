@@ -26,7 +26,8 @@ jobs:
           node-version: 22
           cache: 'npm'
       - run: npm ci
-      - run: npx prisma generate --schema=build/prisma.schema.js --datasource-url="postgresql://docker:Docker@localhost:5432/todo_list?schema=public"
+      - run: npx ts-node prisma.config.ts
+      - run: npx prisma generate --schema=prisma/schema.prisma --datasource-url="postgresql://docker:Docker@localhost:5432/todo_list?schema=public"
 
       - run: npx prisma migrate deploy --schema=prisma/schema.prisma --datasource-url="postgresql://docker:Docker@localhost:5432/todo_list?schema=public"
 
