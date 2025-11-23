@@ -13,9 +13,14 @@ jobs:
         ports:
         - "5432:5432"
         env:
-            POSTGRESQL_USERNAME: docker
-            POSTGRESQL_PASSWORD: Docker
-            POSTGRESQL_DATABASE: todo_list
+          POSTGRESQL_USERNAME: docker
+          POSTGRESQL_PASSWORD: Docker
+          POSTGRESQL_DATABASE: todo_list
+        options: >- 
+          --health-cmd "pg_isready -U docker -d todo_list" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
 
 
     steps:
@@ -23,11 +28,22 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 22
           cache: 'npm'
 
       - run: npm ci
-      
+
+      - run: |
+          until pg_isready -h localhost -p 5432 -U docker; do
+            echo "Waiting for database..."
+            sleep 2
+          done
+
+
+      - run: npx prisma generate --schema=prisma/schema.prisma --datasource-url="postgresql://docker:Docker@localhost:5432/todo_list?schema=public"
+
+      - run: npx prisma migrate deploy --schema=prisma/schema.prisma --datasource-url="postgresql://docker:Docker@localhost:5432/todo_list?schema=public
+  
       - run: npm run test:e2e
         env:
           JWT_SERCRET: todolist
